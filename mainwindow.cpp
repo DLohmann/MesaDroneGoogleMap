@@ -38,9 +38,9 @@ bool MainWindow::checkUrl(const QUrl &url) {
     if (!url.isValid()) {
         ui->mapStatusMessage->setText("Map Status... Could not fetch URL:");
         //Why did the check fail?
-            //Is there an internet connection?   --> If No emit message
-            //Is the JS resource file present?   --> If No emit message
-            //Is the JS resource file corrupted? --> If Yes emit message
+            //Is there an internet connection?
+            //Is the JS resource file present?
+            //Does the JS resource file contain errors?
         return false;
     }
         ui->mapStatusMessage->setText("Map Status... Configured!");
