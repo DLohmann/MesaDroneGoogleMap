@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += webengine webenginewidgets
+QT       += webkit webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

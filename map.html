@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,15 +14,25 @@
      <script type="text/javascript"
         src="https://maps.googleapis.com/maps/api/js?
         key=YOUR_KEY_HERE&libraries=drawing"></script>
-	
+	<!-- JQuery CDN
+	 <script
+	  src="https://code.jquery.com/jquery-3.3.1.min.js"
+	  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	  crossorigin="anonymous"></script>
+	-->
 	<script type="text/javascript">
         var map;
+		var marker;
+        var latitude = 37.374712;
+        var longitude = -120.577858;
+		var currentTime = 0.0;
         function initialize()
         {
             // Add map
             var mapOptions =
             {
-                center: new google.maps.LatLng(37.374712, -120.577858),
+                // center: new google.maps.LatLng(37.374712, -120.577858),
+                center: new google.maps.LatLng(latitude, longitude),
                 zoom: 19,
                 mapTypeId: google.maps.MapTypeId.SATELLITE,
             };
@@ -33,7 +47,7 @@
             });
             
             // Add marker
-            var marker = new google.maps.Marker(
+            marker = new google.maps.Marker(
             {
             position: new google.maps.LatLng(37.374712, -120.577858),
 				map: map,
@@ -45,10 +59,39 @@
         });
         marker.setMap(map); 
         }
-
-        google.maps.event.addDomListener(window, 'load', initialize); </script>
+		
+        function updateLocation(lat,lon){
+            latitude = lat;
+            longitude = lon;
+			map.setCenter    ({latitude:latitude, longitude:longitude, alt:0});
+			mark.setPosition ({latitude:latitude, longitude:longitude, alt:0});
+        };
+		
+		function circlePoint(time) {
+		  var radius = 0.001;
+		  var x = Math.cos(time) * radius;
+		  var y = Math.sin(time) * radius;
+		  updateLocation (latitude + x, longitude + y);
+		  //return {lat:window.lat + y, lng:window.lng + x};
+		};
+		
+		function updateMarker () {
+			currentTime = currentTime + 1000;
+			circlePoint (currentTime);
+		}
+		
+		//Set map to update every certain amount of time
+		setInterval ("updateMarker ()", 1000);
+		//Uses JQuery
+		//window.setInterval (function () {
+			
+		//}, 5000);
+		
+		google.maps.event.addDomListener(window, 'load', initialize); 
+    </script>
 	</head>
     <body ondragstart="return false">
-        <div id ="map-canvas" />
+        <div id ="map-canvas"></div>
+        <input class="w3-button w3-black" type="button" value="Input Button">
 	</body>
 </html>
