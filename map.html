@@ -1,136 +1,125 @@
-
-
-
-
 <!DOCTYPE html>
 <html>
-    <head>
-     <meta name="viewport" content="initial-scale=1.0,user-scalable=no" />
-     <style type="text/css">
-        html { height: 100% }
-        body { height: 100%; margin: 0; padding: 0 }
-        #map-canvas { height: 100% }
-     </style>
-     <script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?
-        key=AIzaSyALt375cV7B_ZO_HCHtKM6G79sJsyI0zmU
+	<head>
+	<meta name="viewport" content="initial-scale=1.0,user-scalable=no" />
+	<style type="text/css">
+		html { height: 100% }
+		body { height: 100%; margin: 0; padding: 0 }
+		#map-canvas { height: 100% }
+	</style>
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?
+		key=AIzaSyALt375cV7B_ZO_HCHtKM6G79sJsyI0zmU
 &libraries=drawing"></script>
 	</head>
-    <body ondragstart="return false">
-        
-        
-        
-        
-            <br>
-            <div id="latitudeText" class="generalInputField">Latitude<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-            </div>
-            <form id="latitudeForm" class="inputValue" onsubmit="initLocation(); return false">
-                <input id="latitudeField" class="inputBorder numberField" type="number" step="any"  name="latitudeInput" placeholder="37.374712">
-            </form>
-        
-        
-                    <div id="longitudeText" class="generalInputField">Longitude<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-            </div>
-            <form id="longitudeForm" class="inputValue" onsubmit="initLocation(); return false">
-                <input id="longitudeField" class="inputBorder numberField" type="number" step="any" name="longitudeInput" placeholder="-120.577858">
-            </form>
-        
-        
+	<body ondragstart="return false">
+		
+		
+		
+		
+			<br>
+			<div id="latitudeText" class="generalInputField">Latitude<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+			</div>
+			<form id="latitudeForm" class="inputValue" onsubmit="initLocation(); return false">
+				<input id="latitudeField" class="inputBorder numberField" type="number" step="any"  name="latitudeInput" placeholder="37.374712">
+			</form>
+		
+		
+					<div id="longitudeText" class="generalInputField">Longitude<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+			</div>
+			<form id="longitudeForm" class="inputValue" onsubmit="initLocation(); return false">
+				<input id="longitudeField" class="inputBorder numberField" type="number" step="any" name="longitudeInput" placeholder="-120.577858">
+			</form>
+		
+		
    
-        <br>
-    
-        <button type="button" id="startButton" onclick="initLocation(); return false">Start Program</button>
-        <br>
-        
-        
-        <div id ="map-canvas"></div>
-        <input class="w3-button w3-black" type="button" value="Input Button">
-        
-        
-        
-        
-        
-        
-        <script type="text/javascript" >
-        var map;
-        var latitude = 37.374712;
-        var longitude = -120.577858;
-        function initialize()
-        {
-            // Add map
-            var mapOptions =
-            {
-                // center: new google.maps.LatLng(37.374712, -120.577858),
-                center: new google.maps.LatLng(latitude, longitude),
-                zoom: 19,
-                mapTypeId: google.maps.MapTypeId.SATELLITE,
-            };
-            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-            map.setTilt(0);
-            
-                    var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: google.maps.drawing.OverlayType.MARKER,
-          drawingControl: true,
-          drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
-          },
-          markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
-          circleOptions: {
-            fillColor: 'rgba(0, 98, 255, 0.46)',
-            fillOpacity: 1,
-            strokeWeight: 5,
-            clickable: false,
-            editable: true,
-            zIndex: 1
-          }
-        });
-        drawingManager.setMap(map);
-
-            // Add event listener
-            google.maps.event.addListener(map, 'zoom_changed',
-        function()
-            {
-            //alert(map.getZoom());
-            });
-            
-            // Add marker
-            var marker = new google.maps.Marker(
-            {
-            position: new google.maps.LatLng(37.374712, -120.577858),
-				map: map,
-				title: "Marker A",
-            });
-        google.maps.event.addListener(marker, 'click', function()
-        {
-			map.panTo(marker.getPosition());
-        });
-        marker.setMap(map); 
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize); 
-
-        function updateLocation(lat,lon){
-            latitude = lat;
-            longitude = lon;
-        }
-        
-         function initLocation(){
-             
-        latitude = Number(document.forms[0].latitudeInput.value);       
-       longitude = Number(document.forms[1].longitudeInput.value);
-
-           initialize();
-        }
-        
-            
-            
-  
-                
-   
-
-    </script>
-        
-        
+		<br>
+	
+		<button type="button" id="startButton" onclick="initLocation(); return false">Start Program</button>
+		<br>
+		
+		
+		<div id ="map-canvas"></div>
+		<input class="w3-button w3-black" type="button" value="Input Button">
+		
+		
+		
+		
+		
+		
+		<script type="text/javascript" >
+			var map;
+			var latitude = 37.374712;
+			var longitude = -120.577858;
+			function initialize()
+			{
+				// Add map
+				var mapOptions =
+				{
+					// center: new google.maps.LatLng(37.374712, -120.577858),
+					center: new google.maps.LatLng(latitude, longitude),
+					zoom: 19,
+					mapTypeId: google.maps.MapTypeId.SATELLITE,
+				};
+				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+				map.setTilt(0);
+				
+				var drawingManager = new google.maps.drawing.DrawingManager({
+					drawingMode: google.maps.drawing.OverlayType.MARKER,
+					drawingControl: true,
+					drawingControlOptions: {
+						position: google.maps.ControlPosition.TOP_CENTER,
+						drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+					},
+					markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
+					circleOptions: {
+						fillColor: 'rgba(0, 98, 255, 0.46)',
+						fillOpacity: 1,
+						strokeWeight: 5,
+						clickable: false,
+						editable: true,
+						zIndex: 1
+					}
+				});
+				drawingManager.setMap(map);
+				
+				// Add event listener
+				google.maps.event.addListener(map, 'zoom_changed',
+					function()
+					{
+					//alert(map.getZoom());
+					}
+				);
+				
+				// Add marker
+				var marker = new google.maps.Marker(
+				{
+					position: new google.maps.LatLng(37.374712, -120.577858),
+					map: map,
+					title: "Marker A",
+				});
+				google.maps.event.addListener(marker, 'click', function()
+				{
+					map.panTo(marker.getPosition());
+				});
+				marker.setMap(map); 
+			}
+			
+			
+			
+			google.maps.event.addDomListener(window, 'load', initialize);
+			
+			function updateLocation(lat,lon){
+				latitude = lat;
+				longitude = lon;
+			}
+			
+			function initLocation(){
+				latitude = Number(document.forms[0].latitudeInput.value);	   
+				longitude = Number(document.forms[1].longitudeInput.value);
+				initialize();
+			}
+			
+		</script>
 	</body>
 </html>
