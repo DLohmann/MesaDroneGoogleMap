@@ -2,6 +2,7 @@
 <html>
 	<head>
 	<meta name="viewport" content="initial-scale=1.0,user-scalable=no" />
+	<meta charset="utf-8"/>
 	<style type="text/css">
 		html { height: 100% }
 		body { height: 100%; margin: 0; padding: 0 }
@@ -49,8 +50,15 @@
 		
 		<script type="text/javascript" >
 			var map;
+			var currentTime = 0.0;
+			var marker;
+			// Starting position of the map
 			var latitude = 37.374712;
 			var longitude = -120.577858;
+			
+			// Current position of drone
+			var droneLatLng = null;
+			
 			function initialize()
 			{
 				// Add map
@@ -92,7 +100,7 @@
 				);
 				
 				// Add marker
-				var marker = new google.maps.Marker(
+				marker = new google.maps.Marker(
 				{
 					position: new google.maps.LatLng(37.374712, -120.577858),
 					map: map,
@@ -110,8 +118,27 @@
 			google.maps.event.addDomListener(window, 'load', initialize);
 			
 			function updateLocation(lat,lon){
-				latitude = lat;
-				longitude = lon;
+				//latitude = lat;
+				//longitude = lon;
+				//map.setCenter      (latitude, longitude, 0);
+				droneLatLng = new google.maps.LatLng (lat, lon);
+				//marker.setPosition (latitude, longitude, 0);
+				marker.setPosition (droneLatLng);
+				
+				console.log ("Updated location to (" + latitude + ", " + longitude + ")\n");
+			};
+			
+			function circlePoint(time) {
+				var radius = 0.001;
+				var x = Math.cos(time) * radius;
+				var y = Math.sin(time) * radius;
+				updateLocation (latitude + x, longitude + y);
+				//return {lat:window.lat + y, lng:window.lng + x};
+			};
+			
+			function updateMarker () {
+				currentTime = currentTime + 0.01;
+				circlePoint (currentTime);
 			}
 			
 			function initLocation(){
@@ -119,6 +146,7 @@
 				longitude = Number(document.forms[1].longitudeInput.value);
 				initialize();
 			}
+			setInterval ("updateMarker ()", 10);
 			
 		</script>
 	</body>
