@@ -50,6 +50,8 @@
 		
 		<script type="text/javascript" >
 			var map;
+            var markerXPos;
+            var markerYPos;
 			var currentTime = 0.0;
 			var marker;
 			// Starting position of the map
@@ -62,12 +64,17 @@
 			function initialize()
 			{
 				// Add map
+                
+                markerXPos = latitude;
+                markerYPos = longitude;
+                
 				var mapOptions =
 				{
 					// center: new google.maps.LatLng(37.374712, -120.577858),
 					center: new google.maps.LatLng(latitude, longitude),
 					zoom: 19,
 					mapTypeId: google.maps.MapTypeId.SATELLITE,
+                    keyboardShortcuts: false,
 				};
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 				map.setTilt(0);
@@ -105,6 +112,7 @@
 					position: new google.maps.LatLng(37.374712, -120.577858),
 					map: map,
 					title: "Marker A",
+                    icon: 'arrowIcon.png',
 				});
 				google.maps.event.addListener(marker, 'click', function()
 				{
@@ -117,22 +125,22 @@
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
 			
-			function updateLocation(lat,lon){
-				//latitude = lat;
-				//longitude = lon;
-				//map.setCenter      (latitude, longitude, 0);
+			function updateMarkerLocation(lat,lon){
+
 				droneLatLng = new google.maps.LatLng (lat, lon);
-				//marker.setPosition (latitude, longitude, 0);
 				marker.setPosition (droneLatLng);
 				
 				console.log ("Updated location to (" + latitude + ", " + longitude + ")\n");
+                
+                markerXPos = lat;
+                markerYPos = lon;
 			};
 			
 			function circlePoint(time) {
 				var radius = 0.001;
 				var x = Math.cos(time) * radius;
 				var y = Math.sin(time) * radius;
-				updateLocation (latitude + x, longitude + y);
+				updateMarkerLocation (latitude + x, longitude + y);
 				//return {lat:window.lat + y, lng:window.lng + x};
 			};
 			
@@ -144,9 +152,56 @@
 			function initLocation(){
 				latitude = Number(document.forms[0].latitudeInput.value);	   
 				longitude = Number(document.forms[1].longitudeInput.value);
+                
+                markerXPos = latitude;
+                markerYPos = longitude;
+                
 				initialize();
+                
+              
+                
+                updateMarkerLocation(latitude, longitude);
 			}
-			setInterval ("updateMarker ()", 10);
+			//setInterval ("updateMarker ()", 10);
+            
+            
+            
+            
+// When an arrow key is pressed, use checkKey function
+            
+            window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+}, false);
+            
+document.onkeydown = checkKey;      
+            
+// Use cases depending on key pressed
+function checkKey(e) {
+
+    e = e || window.event;
+
+    if (e.keyCode == '38') {
+        // up arrow
+        updateMarkerLocation(markerXPos + 0.000015, markerYPos);
+       
+    }
+    else if (e.keyCode == '40') {
+        // down arrow
+               updateMarkerLocation(markerXPos - 0.000015, markerYPos);
+    }
+    else if (e.keyCode == '37') {
+       // left arrow
+               updateMarkerLocation(markerXPos, markerYPos - 0.000015);
+    }
+    else if (e.keyCode == '39') {
+       // right arrow
+               updateMarkerLocation(markerXPos, markerYPos + 0.000015);
+    }
+
+}
 			
 		</script>
 	</body>
