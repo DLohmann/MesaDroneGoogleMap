@@ -4,9 +4,56 @@
 	<meta name="viewport" content="initial-scale=1.0,user-scalable=no" />
 	<meta charset="utf-8"/>
 	<style type="text/css">
-		html { height: 100% }
-		body { height: 75%; margin: 0; padding: 0 }
-		#map-canvas { height: 100% }
+		html {
+			height: 100%;
+		}
+		body {
+			height: 75%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#map-canvas {
+			height: 100%;
+			opacity:0.50;
+			/*
+			foreground: linear-gradient(
+				rgba(200, 200, 200, 0.5),
+				rgba(200, 200, 200, 0.5)
+			);
+			*/
+		}
+		#black-canvas {	/*map is overlayed on top of this black canvas, and made transparent*/
+			height: 100%;
+			background-color: black;
+		}
+		
+		/*
+		.wrapper {
+			height: 100%;
+			background-color: black;
+		}
+		*/
+		
+		/*.overlay{
+			background-color: rgba(200, 200, 200, 0.7);
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			position: relative;
+			z-index: 1;
+		}
+		.css_selector {
+			background: linear-gradient(
+				rgba(20, 20, 20, 0.5),
+				rgba(20, 20, 20, 0.5)
+			);
+		}
+		foreground: linear-gradient(
+				rgba(20, 20, 20, 0.5),
+				rgba(20, 20, 20, 0.5)
+			);*/
 	</style>
 	<script type="text/javascript"
 		src="https://maps.googleapis.com/maps/api/js?
@@ -17,9 +64,9 @@
 		
 		
 		<label>Date: <label id="timeBox"></label>, Flight Time: <label id="flightTimeBox" style="font-weight:bold"></label> Minutes</label><br>
-		<label>Position: </label><br>
+		<label>Location: <label id="flightLocationBox" style="font-weight:bold"></label></label></label><br>
 		<label>Speed: <label id="flightSpeedBox" style="font-weight:bold"></label> mph</label><br>
-		<label>Direction: </label><br>
+		<label>Direction: <label id="flightDirectionBox" style="font-weight:bold"></label></label></label><br>
 		<label>Altitude: <label id="flightAltitudeBox" style="font-weight:bold"></label> ft</label></label><br>
 	
 		<h3>Restart Simulation:</h3>
@@ -42,8 +89,7 @@
 		<button type="button" id="startButton" onclick="initLocation(); return false">Start Program</button>
 		<br>
 		
-		
-		<div id ="map-canvas"></div>
+		<div id="black-canvas"><div id ="map-canvas"></div></div>
 		<input class="w3-button w3-black" type="button" value="Input Button">
 		
 		
@@ -67,6 +113,7 @@
 			var droneLatLng = new google.maps.LatLng (latitude, longitude);;
 			var lastDroneLatLng = droneLatLng;
 			var lastPositionUpdateTime = 0.0;
+			var direction = "";
 			
 			function initialize()
 			{
@@ -136,9 +183,19 @@
 				droneLatLng = new google.maps.LatLng (lat, lon);
 				
 				var distance = google.maps.geometry.spherical.computeDistanceBetween(lastDroneLatLng, droneLatLng);	// compute distance between previous and current location in meters
-				
 				speed = (2236.94 * distance)/(Date.now() - lastPositionUpdateTime); // time is in milliseconds, so multiply by 1000 to get seconds, so speed is in meters per second. Then multiply by 2.23694 to get miles per hour
 				lastPositionUpdateTime = Date.now();
+				
+				if (droneLatLng.lat() > lastDroneLatLng.lat()) {
+					direction = "N";
+				} else {
+					direction = "S";
+				}
+				if (droneLatLng.lng() > lastDroneLatLng.lng()) {
+					direction = direction + "E";
+				} else {
+					direction = direction + "W";
+				}
 				
 				//marker.setPosition (latitude, longitude, 0);
 				marker.setPosition (droneLatLng);
@@ -176,7 +233,8 @@
 				document.getElementById("flightTimeBox").innerHTML = Math.round((Date.now() - startTime)/60000)
 				document.getElementById("flightSpeedBox").innerHTML = speed;
 				document.getElementById("flightAltitudeBox").innerHTML = altitude;
-				
+				document.getElementById("flightDirectionBox").innerHTML = direction;
+				document.getElementById("flightLocationBox").innerHTML = Math.abs(droneLatLng.lat()) + (droneLatLng.lat() > 0? " N" : " S") + ",  " + Math.abs(droneLatLng.lng()) + (droneLatLng.lng() > 0? " E" : " W");
 			}
 			
 			setInterval ("updateMap ()", 500);
