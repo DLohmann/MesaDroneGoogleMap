@@ -1,0 +1,10 @@
+Action       Feb24
+OplsTimeAdd  -21682.4
+TelmTimeAdd  0.0
+WindTimeAdd  0.0
+WindDirAdd   30
+FnNlyz       c:/home/lechrist/activities_cool/hydrothermal_expt/Fig11_of_russell_lauren_paper/all_data.txt
+FnWrite      output/gdat.dat
+FnOpls       c:/home/lechrist/activities_hot/opls/data/2016/02/24/opls.gdat
+FnTelm       c:/home/lechrist/activities_hot/opls/data/2016/02/24/gps.dat
+FnWind       c:/home/lechrist/activities_hot/opls/nov5_2015/data/wind_20151105_131139.txt

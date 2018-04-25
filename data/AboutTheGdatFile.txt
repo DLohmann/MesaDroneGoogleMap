@@ -1,0 +1,9 @@
+The columns of the .gdat file are as such:
+
+1: time
+2: ch4 (need to mult by 1e9)
+7: lat
+8: lon
+9: alt
+14: wind speed
+15: wind dir
