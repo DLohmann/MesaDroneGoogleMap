@@ -134,8 +134,8 @@
 
 			function initGrid()
 			{
-				var topEdge  = latitude  - ((gridLength / 2) * gridResolution);
-				var leftEdge = longitude - ((gridLength / 2) * gridResolution);
+				var topEdge = latitude + ((gridLength / 2) * gridResolution);
+				var leftEdge = longitude - ((gridLength / 4) * gridResolution) + gridLength * gridResolution;
 				for (var i = 0; i < gridLength; i++) {
 					grid[i] = [];
 					for (var j = 0; j < gridLength; j++) {
@@ -147,10 +147,10 @@
 							fillOpacity: 0.80,
 							map: map,
 							bounds: {
-								north: topEdge + ((j + gridLength / 4) * gridResolution),
-								south: topEdge + ((j + gridLength / 4) * gridResolution) - gridResolution,
-								east: leftEdge + ((i + gridLength / 4) * gridResolution),
-								west: leftEdge + ((i + gridLength / 4) * gridResolution) - gridResolution
+								north: topEdge  - (i * gridResolution),
+								south: topEdge  - (i * gridResolution) - gridResolution,	//topEdge + ((j + gridLength / 4) * gridResolution) - gridResolution,
+								east:  leftEdge - (j * gridResolution),	//leftEdge + ((i + gridLength / 4) * gridResolution),
+								west:  leftEdge - (j * gridResolution) - gridResolution	//leftEdge + ((i + gridLength / 4) * gridResolution) - gridResolution
 							}
 						});
 						
@@ -285,7 +285,7 @@
 			function updateGrid() {
 				var y = (droneLatLng.lat() - latitude)  / gridResolution;
 				var x = (droneLatLng.lng() - longitude) / gridResolution;
-
+				grid[x][y].fillColor = '#3F3F3F';
 
 
 			}
