@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
 	<meta name="viewport" content="initial-scale=1.0,user-scalable=no" />
@@ -8,14 +8,14 @@
 			height: 100%;
 		}
 		body {
-			height: 75%;
+			height: 58vh;
 			margin: 0;
 			padding: 0;
 		}
 		
 		#map-canvas {
 			height: 100%;
-			opacity:0.50;
+			opacity:1.00;
 			/*
 			foreground: linear-gradient(
 				rgba(200, 200, 200, 0.5),
@@ -23,6 +23,8 @@
 			);
 			*/
 		}
+
+
 		#black-canvas {	/*map is overlayed on top of this black canvas, and made transparent*/
 			height: 100%;
 			background-color: black;
@@ -67,7 +69,7 @@
 		<label>Location: <label id="flightLocationBox" style="font-weight:bold"></label></label></label><br>
 		<label>Speed: <label id="flightSpeedBox" style="font-weight:bold"></label> mph</label><br>
 		<label>Direction: <label id="flightDirectionBox" style="font-weight:bold"></label></label></label><br>
-		<label>Altitude: <label id="flightAltitudeBox" style="font-weight:bold"></label> ft</label></label><br>
+		<label>Altitude: <label id="flightAltitudeBox" style="font-weight:bold"></label> ft</label></label>
 	
 		<h3>Restart Simulation:</h3>
 		<div id="latitudeText" class="generalInputField">Latitude<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
@@ -83,37 +85,78 @@
 		</form>
 		<br>
 		
-		
-		
-		<br>
 		<button type="button" id="startButton" onclick="initLocation(); return false">Start Program</button>
 		<br>
 		
 		<div id="black-canvas"><div id ="map-canvas"></div></div>
 		<input class="w3-button w3-black" type="button" value="Input Button">
-		
-		
-		
-		
-		
-		
+
 		<script type="text/javascript" >
+
+			// Initialize map variables
 			var map;
 			var currentTime = 0.0;
 			//var currentDate = new Date();
 			var startTime = new Date();
 			var marker;
-			// Starting position of the map
+
+			// Starting position of map
 			var latitude = 37.374712;
 			var longitude = -120.577858;
+
+			// starting drone parameters
 			var speed = 0.0;
 			var altitude = 0.0;
 			
 			// Current and previous position of drone
-			var droneLatLng = new google.maps.LatLng (latitude, longitude);;
+			var droneLatLng = new google.maps.LatLng (latitude, longitude);
 			var lastDroneLatLng = droneLatLng;
 			var lastPositionUpdateTime = 0.0;
-			var direction = "";
+			var direction = "";	// "NW", "NE", "SE", "SW"
+
+			// Fog of war grid
+			var grid = [[]];
+			var gridLength = 100;
+			var gridResolution = 0.00001;
+
+			// File reading
+			/*
+			var file = IO.getFile("data/20170327_70119.gdat");
+			var inStream = IO.newInputStream(file, "text");
+			*/
+			/*
+			var file = new FileReader();
+			
+			var lines = file.readAsText("data/20170327_70119.gdat").split("/\r?\n/g");
+			console.log(lines);
+			*/
+			//var inStream = 	//IO.newInputStream(file, "text");
+
+			function initGrid()
+			{
+				var topEdge  = latitude  - ((gridLength / 2) * gridResolution);
+				var leftEdge = longitude - ((gridLength / 2) * gridResolution);
+				for (var i = 0; i < gridLength; i++) {
+					grid[i] = [];
+					for (var j = 0; j < gridLength; j++) {
+						grid [i][j] = new google.maps.Rectangle({
+							strokeColor: '#3F3F3F',
+							strokeOpacity: 0.8,
+							strokeWeight: 1,
+							fillColor: '#3F3F3F',
+							fillOpacity: 0.80,
+							map: map,
+							bounds: {
+								north: topEdge + ((j + gridLength / 4) * gridResolution),
+								south: topEdge + ((j + gridLength / 4) * gridResolution) - gridResolution,
+								east: leftEdge + ((i + gridLength / 4) * gridResolution),
+								west: leftEdge + ((i + gridLength / 4) * gridResolution) - gridResolution
+							}
+						});
+						
+					}
+				}
+			}
 			
 			function initialize()
 			{
@@ -129,7 +172,8 @@
 				map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 				map.setTilt(0);
 				
-				var drawingManager = new google.maps.drawing.DrawingManager({
+				var drawingManager = new google.maps.drawing.DrawingManager(
+				{
 					drawingMode: google.maps.drawing.OverlayType.MARKER,
 					drawingControl: true,
 					drawingControlOptions: {
@@ -167,7 +211,8 @@
 				{
 					map.panTo(marker.getPosition());
 				});
-				marker.setMap(map); 
+				marker.setMap(map);
+				initGrid();
 			}
 			
 			
@@ -202,8 +247,10 @@
 				
 				console.log ("Updated location to (" + latitude + ", " + longitude + ")\n");
 			};
+
 			
-			function circlePoint(time) {
+			function circlePoint(time) 
+			{
 				var radius = 0.0005;
 				var x = Math.cos(time/10000) * radius;
 				var y = Math.sin(time/10000) * radius;
@@ -212,10 +259,46 @@
 				//return {lat:window.lat + y, lng:window.lng + x};
 			};
 			
+			/*
+			function readFileData()
+			{
+				var lineStr = inStream.readLine();
+
+				// When reaching end of file
+				if (!inStream.available()) {
+
+					// go back to top of file
+
+					return;	// do nothing
+				}
+				var params = lineStr.split();
+
+				var fileLat = parseFloat(params[6]);	// drone longitude is 7the column
+				var fileLon = parseFloat(params[7]);	// drone latitude  is 8the column
+				var fileAlt = parseFloat(params[8]);	// drone altitude  is 9the column
+
+				altitude = fileAlt;
+				updateLocation(fileLat, fileLon);
+			}
+			*/
+
+			function updateGrid() {
+				var y = (droneLatLng.lat() - latitude)  / gridResolution;
+				var x = (droneLatLng.lng() - longitude) / gridResolution;
+
+
+
+			}
+
 			function updateMap () {
 				currentTime = Date.now() - startTime;	//currentTime + 0.010;
 				circlePoint (currentTime);
+				//readFileData();
 				updateFlightInfoText();
+				
+				// Update map grid
+				updateGrid();
+
 			}
 			
 			function initLocation(){
